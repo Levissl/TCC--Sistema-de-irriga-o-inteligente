@@ -1,0 +1,51 @@
+#define sensor1 A0 // define porta analogica A0 como sensor1
+#define sensor2 A1 // define porta analogica A1 como sensor2
+int rele1 = 7; // solenoide que se refere ao pino digital 7.
+int rele2 = 8; // solenoide que se refere ao pino digital 8.
+int regar = 10; // tempo que o sistema irá regar.
+int limiteseco = 30; //Variável Global que define limite de úmidade que a horta deve ser regada.
+int verificar = 10; // variável Global que define em quanto tempo a horta deve ser verificada para ser regada.
+void setup() {
+pinMode(rele1,OUTPUT); // Define o pino digital 7 como saída.
+pinMode(rele2,OUTPUT); // define o pino digital 8 como saida.
+Serial.begin(9600); // inicia a comunicação serial.
+}
+void loop() {
+int valorse1 = analogRead(sensor1); // le o valor do pino A0.
+int valorse2 = analogRead(sensor2); // le o valor do pino A1.
+valorse1 = map(valorse1, 1023, 0, 0, 100); // transforma o valor lido do arduin em porcentagem de umidade.
+valorse2 = map(valorse2, 1023, 0, 0, 100); // transforma o valor lido do arduin em porcentagem de umidade.
+Serial.println("vericando úmidade das hortas");// Mostra no monitor serial que as horas estão sendo verificadas.
+delay(1000);
+Serial.print( valorse1); // valor em porcentagem de úmidade do pino A0.
+Serial.println("% Úmidade na Horta 1"); // mostra no monitor serial a úmidade da horta.
+Serial.println();// salta 1 linha.
+Serial.print( valorse2 ); // valor em porcentagem de úmidade do pino A1.
+52
+Serial.println("% Úmidade na Horta 2");// mostra no monitor serial a úmidade da horta.
+Serial.println();// salta 1 linha.
+if(valorse1 >= limiteseco && valorse2 >= limiteseco){ Serial.println("Úmidade normal, não precisa regar");}
+Serial.println();
+delay(verificar*1000);
+if ( valorse1 <= limiteseco || valorse2 <= limiteseco){ // teste condicional .
+if (valorse1 <= limiteseco){
+Serial.print(valorse1); // mostra o valor de A0 no monitor serial.
+Serial.println("% de Úmidade na Horta 1, precisa ser regada");
+digitalWrite(rele1,LOW); // Aciona o rele1
+Serial.println("REGANDO");
+delay(regar*1000); // Rega de acordo com o valor estipulado
+Serial.println("Horta 1 regada");
+digitalWrite(rele1,HIGH); // desliga o rele1
+delay(1000); // espera 1 segundo pra ir pra proxima instrução}
+}
+if ( valorse2 <= limiteseco){
+Serial.print(valorse2);
+Serial.println("% de Úmidade na Horta 2, precisa ser regada");
+digitalWrite(rele2,LOW);// Aciona o rele2
+Serial.println("REGANDO");
+delay(regar*1000); // Rega de acordo com o valor estipulado
+Serial.println("Horta 2 regada");
+digitalWrite(rele2,HIGH); // desliga o rele2
+Serial.println();
+}}
+}
